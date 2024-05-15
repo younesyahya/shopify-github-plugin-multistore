@@ -1,0 +1,16 @@
+{
+  "name": "@younesyahya/shopify-github-plugin-multistore",
+  "version": "0.0.1-beta",
+  "main": "src/merge.js",
+  "author": "Younes YAHYA",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/younesyahya/shopify-github-plugin-multistore.git"
+  },
+  "dependencies": {
+    "@actions/core": "^1.10.1",
+    "@actions/github": "^6.0.0",
+    "slack-notify": "^2.0.7"
+  }
+}

@@ -1,0 +1,26 @@
+name: Shopify Github Plugin Multistore
+description: Merge the main branch into the brand's live branches
+author: Younes Yahya
+inputs:
+  source:
+    description: "Name of the branch to merge from"
+    required: true
+    default: "main"
+  target:
+    description: "Name of the branch to merge to"
+    required: true
+  github_token:
+    description: "Token to authenticate with GitHub"
+    required: true
+    default: ${{ github.token }}
+  webhook_url:
+    description: "URL to send notifications to"
+    required: false
+  ignore_json_files:
+    description: "Ignore JSON files"
+    required: false
+    default: "true"
+
+runs:
+  using: "node18"
+  main: "dist/index.js"
