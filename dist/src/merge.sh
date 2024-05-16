@@ -10,8 +10,8 @@ git checkout $TO_BRANCH
 # Start the merge but don't commit automatically
 if git merge --no-commit --no-ff $FROM_BRANCH; then
     # Reset changes in specific JSON files
-    git reset HEAD templates/*.json config/settings_data.json locales/*.json
-    git checkout -- templates/*.json config/settings_data.json locales/*.json
+    git reset HEAD templates/*.json config/*.json locales/*.json
+    git checkout -- templates/*.json config/!(settings_schema.json) locales/*.json
 
     # If reset is successful and there are no conflicts
     if [ $? -eq 0 ]; then
