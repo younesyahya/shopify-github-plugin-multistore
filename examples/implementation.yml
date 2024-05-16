@@ -1,0 +1,44 @@
+# The action that is run to synchronize the files.
+name: Multistore test 
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  pull_request:
+   branches:
+     - main
+   paths-ignore:
+     - 'templates/*.json'
+     - 'config/*.json'
+     - 'locales/*.json' 
+  push:
+   branches:
+     - main
+   paths-ignore:
+     - 'templates/*.json'
+     - 'config/*.json'
+     - 'locales/*.json'
+   
+
+jobs:
+ build:
+   permissions: write-all
+   runs-on: ubuntu-latest
+
+   steps:
+     - name: checkout
+       uses: actions/checkout@v2
+     - name: merge
+       uses: younesyahya/shopify-github-plugin-multistore@v1
+       id: merge-canada
+       with:
+         github_token: ${{ secrets.GITHUB_TOKEN }}
+         source: 'main'
+         target: 'live-canada'
+     - name: merge
+       uses: younesyahya/shopify-github-plugin-multistore@v1
+       id: merge-france
+       with:
+         github_token: ${{ secrets.GITHUB_TOKEN }}
+         source: 'main'
+         target: 'live-france'
