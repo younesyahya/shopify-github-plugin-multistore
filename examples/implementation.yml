@@ -1,4 +1,3 @@
-# The action that is run to synchronize the files.
 name: Multistore test 
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
@@ -29,16 +28,19 @@ jobs:
      - name: checkout
        uses: actions/checkout@v2
      - name: merge
-       uses: younesyahya/shopify-github-plugin-multistore@v1
+       uses: younesyahya/shopify-github-plugin-multistore@0.0.2
        id: merge-canada
        with:
          github_token: ${{ secrets.GITHUB_TOKEN }}
          source: 'main'
          target: 'live-canada'
+         ignore_json_files: "true"
      - name: merge
-       uses: younesyahya/shopify-github-plugin-multistore@v1
+       uses: younesyahya/shopify-github-plugin-multistore@0.0.2
        id: merge-france
        with:
          github_token: ${{ secrets.GITHUB_TOKEN }}
          source: 'main'
          target: 'live-france'
+         ignore_json_files: "true"
+
