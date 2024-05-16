@@ -4,11 +4,25 @@
 FROM_BRANCH=$1 # main
 TO_BRANCH=$2 # live-canada
 
+
+# Configure Git user
+GIT_USER_NAME="GitHub Action: Multi Store Merge Bot"
+GIT_USER_EMAIL="bot@the-deployer.fr"
+
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-# Checkout the target branch and pull the latest changes
+# Set Git user details
+git config --global user.name "$GIT_USER_NAME"
+git config --global user.email "$GIT_USER_EMAIL"
+
+git fetch origin $FROM_BRANCH
 git fetch origin $TO_BRANCH
+
+# Checkout the source branch and pull the latest changes
+git checkout $FROM_BRANCH && git pull origin $FROM_BRANCH || git checkout -b $FROM_BRANCH origin/$FROM_BRANCH
+
+# Checkout the target branch and pull the latest changes
 git checkout $TO_BRANCH && git pull origin $TO_BRANCH || git checkout -b $TO_BRANCH origin/$TO_BRANCH
 
 # Start the merge but don't commit automatically, favoring 'theirs' strategy option for conflicts
