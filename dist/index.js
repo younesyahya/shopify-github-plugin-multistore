@@ -31220,7 +31220,7 @@ const childProcess = __nccwpck_require__(2081);
 const fs = __nccwpck_require__(7147);
 const github = __nccwpck_require__(3617);
 const githubActionCore = __nccwpck_require__(4097);
-const slack = __nccwpck_require__(579)(githubActionCore.getInput('webhook_url', { required: false}));
+const slack = __nccwpck_require__(579)(githubActionCore.getInput('webhook_url', { required: false }));
 
 
 function successMessage(source, target) {
@@ -31266,7 +31266,7 @@ function sendSlackMessage(source, target, status) {
 
 function executeMergeScript(source, target) {
     return new Promise((resolve, reject) => {
-        childProcess.exec(`"./merge.sh" ${source} ${target}`, function(error, stdout, stderr) {
+        childProcess.exec(`./merge.sh ${source} ${target}`, function(error, stdout, stderr) {
             console.log('stdout:', stdout);
             console.log('stderr:', stderr);
             if (error) {
