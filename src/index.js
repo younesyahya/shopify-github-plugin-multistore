@@ -1,8 +1,12 @@
-const childProcess = require('child_process');
-const fs = require('fs');
-const github = require('@actions/github');
-const githubActionCore = require('@actions/core');
-const slack = require('slack-notify')(githubActionCore.getInput('webhook_url'));
+
+import childProcess  from 'child_process';
+import fs from 'fs';
+import github from '@actions/github';
+import githubActionCore from '@actions/core';
+import slack from 'slack-notify';
+
+
+const slackNotify = slack(githubActionCore.getInput('webhook_url'));
 
 function successMessage(source, target) {
     return {
@@ -27,7 +31,7 @@ function sendSlackMessage(source, target, status) {
                   successMessage(source, target) :
                   errorMessage(source, target);
 
-    slack.send({
+    slackNotify.send({
         icon_emoji: payload.icon,
         username: payload.message,
         attachments: [
