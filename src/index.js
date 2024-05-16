@@ -53,9 +53,9 @@ function executeMergeScript(source, target) {
     childProcess.exec(
       `"${scriptPath}" ${source} ${target}`,
       function (error, stdout, stderr) {
-        console.log("stdout:", stdout);
-        console.log("stderr:", stderr);
-        if (error) {
+          if (error) {
+            console.log("stdout:", stdout);
+            console.log("stderr:", stderr);
           console.error("exec error:", error);
           return reject(error);
         }
@@ -67,7 +67,7 @@ function executeMergeScript(source, target) {
 
 function createMessageFile(message) {
   return new Promise((resolve, reject) => {
-    fs.writeFile("merge-status.txt", message, (err) => {
+    fs.writeFile("merge-status.txt", undefined, (err) => {
       if (err) {
         console.error("Failed to create merge-status.txt:", err);
         return reject(err);
@@ -95,8 +95,10 @@ async function run() {
   const source = githubActionCore.getInput("source", { required: true });
   const target = githubActionCore.getInput("target", { required: true });
   githubActionCore.info("Merging " + source + " into " + target);
+  
+  await createMessageFile("starting merge");
+
   try {
-    await createMessageFile("starting merge");
     await executeMergeScript(source, target);
     const mergeState = fs.readFileSync("merge-status.txt", "utf8").trim();
 
