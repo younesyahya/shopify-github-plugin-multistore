@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "ncc build src/index.js -o dist",
-    "postbuild": "copyfiles src/merge.sh dist/",
+    "postbuild": "copyfiles src/merge.sh dist/ && chmod +x dist/src/merge.sh",
     "prepare": "husky"
   },
   "dependencies": {
