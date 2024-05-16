@@ -1,10 +1,9 @@
-
 const childProcess = require('child_process');
 const fs = require('fs');
+const path = require('path');
 const github = require('@actions/github');
 const githubActionCore = require('@actions/core');
 const slack = require('slack-notify')(githubActionCore.getInput('webhook_url', { required: false }));
-
 
 function successMessage(source, target) {
     return {
@@ -48,8 +47,9 @@ function sendSlackMessage(source, target, status) {
 }
 
 function executeMergeScript(source, target) {
+    const scriptPath = path.resolve(__dirname, 'src/merge.sh');
     return new Promise((resolve, reject) => {
-        childProcess.exec(`src/merge.sh ${source} ${target}`, function(error, stdout, stderr) {
+        childProcess.exec(`"${scriptPath}" ${source} ${target}`, function(error, stdout, stderr) {
             console.log('stdout:', stdout);
             console.log('stderr:', stderr);
             if (error) {
@@ -61,35 +61,53 @@ function executeMergeScript(source, target) {
     });
 }
 
+function createMessageFile(message) {
+    return new Promise((resolve, reject) => {
+        fs.writeFile('merge-status.txt', message, (err) => {
+            if (err) {
+                console.error('Failed to create merge-status.txt:', err);
+                return reject(err);
+            }
+            resolve();
+        });
+    });
+}
+
+function deleteMessageFile() {
+    return new Promise((resolve, reject) => {
+        fs.unlink('merge-status.txt', (err) => {
+            if (err) {
+                console.error('Failed to delete merge-status.txt:', err);
+                return reject(err);
+            } else {
+                console.log('merge-status.txt was successfully deleted');
+                resolve();
+            }
+        });
+    });
+}
+
 async function run() {
     const source = githubActionCore.getInput('source', { required: true });
     const target = githubActionCore.getInput('target', { required: true });
     githubActionCore.info('Merging ' + source + ' into ' + target);
     try {
+        await createMessageFile('starting merge');
         await executeMergeScript(source, target);
         const mergeState = fs.readFileSync('merge-status.txt', 'utf8').trim();
-
+        
         if (mergeState === 'success') {
             sendSlackMessage(source, target, 'success');
+            githubActionCore.info('Merging ' + source + ' into ' + target + ' succeeded');
         } else {
             sendSlackMessage(source, target, 'failure');
             githubActionCore.setFailed(`Failed to merge ${source} into ${target}`);
         }
-    } 
-    
-    catch (error) {
+    } catch (error) {
         sendSlackMessage(source, target, 'failure');
         githubActionCore.setFailed(`Failed to merge ${source} into ${target}`);
-    } 
-    
-    finally {
-        fs.unlink('merge-status.txt', (err) => {
-            if (err) {
-                console.error('Failed to delete merge-status.txt:', err);
-            } else {
-                console.log('merge-status.txt was successfully deleted');
-            }
-        });
+    } finally {
+        await deleteMessageFile();
     }
 }
 
