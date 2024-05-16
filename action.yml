@@ -20,6 +20,9 @@ inputs:
     description: "Ignore JSON files"
     required: false
     default: "true"
+branding:
+  icon: git-merge
+  color: green
 
 runs:
   using: "node18"
