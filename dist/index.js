@@ -31271,7 +31271,7 @@ function post(url, body) {
 
 
 
-const slackNotify = esm(core_default().getInput('webhook_url'));
+const slackNotify = esm(core_default()?.getInput('webhook_url'));
 
 function successMessage(source, target) {
     return {

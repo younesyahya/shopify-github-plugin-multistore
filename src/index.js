@@ -6,7 +6,7 @@ import githubActionCore from '@actions/core';
 import slack from 'slack-notify';
 
 
-const slackNotify = slack(githubActionCore.getInput('webhook_url'));
+const slackNotify = slack(githubActionCore?.getInput('webhook_url'));
 
 function successMessage(source, target) {
     return {

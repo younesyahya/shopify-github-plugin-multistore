@@ -13,12 +13,12 @@ inputs:
     description: "Token to authenticate with GitHub"
     required: true
     default: ${{ github.token }}
-  webhook_url:
-    description: "URL to send notifications to"
-    required: false
   ignore_json_files:
     description: "Ignore JSON files"
     required: true
+  webhook_url:
+    description: "URL to send notifications to"
+    required: false
 branding:
   icon: git-merge
   color: green
