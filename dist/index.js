@@ -6036,6 +6036,135 @@ function onceStrict (fn) {
 
 /***/ }),
 
+/***/ 579:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const https = __nccwpck_require__(5687);
+const Buffer = (__nccwpck_require__(4300).Buffer);
+
+const NO_URL_ERROR = 'No Slack URL configured.';
+
+function isString(str) {
+  return typeof str === 'string';
+}
+
+module.exports = (url) => {
+  const pub = {};
+
+  pub.request = (data) => {
+    return new Promise((resolve, reject) => {
+      if (!url) {
+        return reject(NO_URL_ERROR);
+      }
+
+      post(url, JSON.stringify(data)).then((resBody) => {
+        if (resBody !== 'ok') {
+          reject(resBody);
+        } else {
+          resolve();
+        }
+      }).catch(reject);
+    });
+  };
+
+  pub.send = (options) => {
+    if (isString(options)) {
+      options = { text: options };
+    }
+
+    const data = Object.assign({}, options);
+
+    // Move the fields into attachments
+    if (options.fields) {
+      if (!data.attachments) {
+        data.attachments = [];
+      }
+
+      data.attachments.push({
+        fallback: 'Alert details',
+        fields: Object.values(options.fields).map((value, index) => {
+          const title = Object.keys(options.fields)[index];
+
+          return {
+            title,
+            value,
+            short: (value + '').length < 25
+          };
+        })
+      });
+
+      delete(data.fields);
+    }
+
+    // Remove the default icon_emoji if icon_url was set in options. Otherwise the default emoji will always override the url
+    if (options.icon_url && !options.icon_emoji) {
+      delete(data.icon_emoji);
+    }
+
+    return pub.request(data);
+  };
+
+  pub.extend = (defaults) => (options) => {
+    if (isString(options)) {
+      options = { text: options };
+    }
+
+    return pub.send(Object.assign({}, defaults, options));
+  };
+
+  pub.success = pub.extend({
+    channel: '#alerts',
+    icon_emoji: ':trophy:',
+    username: 'Success'
+  });
+
+  pub.bug = pub.extend({
+    channel: '#bugs',
+    icon_emoji: ':bomb:',
+    username: 'Bug'
+  });
+
+  pub.alert = pub.extend({
+    channel: '#alerts',
+    icon_emoji: ':warning:',
+    username: 'Alert'
+  });
+
+  return pub;
+};
+
+// Based off of https://stackoverflow.com/a/50891354
+function post(url, body) {
+  return new Promise((resolve, reject) => {
+    const req = https.request(url, { method: 'POST' }, (res) => {
+      const chunks = [];
+      res.on('data', data => chunks.push(data));
+      res.on('end', () => {
+        let resBody = Buffer.concat(chunks).toString();
+
+        switch (res.headers['content-type']) {
+          case 'application/json':
+            resBody = JSON.parse(resBody);
+            break;
+        }
+
+        resolve(resBody);
+      });
+    });
+
+    req.on('error', reject);
+
+    if (body) {
+      req.write(body);
+    }
+
+    req.end();
+  });
+}
+
+
+/***/ }),
+
 /***/ 4437:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -29212,6 +29341,14 @@ module.exports = require("buffer");
 
 /***/ }),
 
+/***/ 2081:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("child_process");
+
+/***/ }),
+
 /***/ 6206:
 /***/ ((module) => {
 
@@ -31070,208 +31207,21 @@ module.exports = parseParams
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__nccwpck_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__nccwpck_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__nccwpck_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__nccwpck_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-"use strict";
-// ESM COMPAT FLAG
-__nccwpck_require__.r(__webpack_exports__);
 
-;// CONCATENATED MODULE: external "child_process"
-const external_child_process_namespaceObject = require("child_process");
-var external_child_process_default = /*#__PURE__*/__nccwpck_require__.n(external_child_process_namespaceObject);
-// EXTERNAL MODULE: external "fs"
-var external_fs_ = __nccwpck_require__(7147);
-var external_fs_default = /*#__PURE__*/__nccwpck_require__.n(external_fs_);
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var github = __nccwpck_require__(3617);
-var github_default = /*#__PURE__*/__nccwpck_require__.n(github);
-// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __nccwpck_require__(4097);
-var core_default = /*#__PURE__*/__nccwpck_require__.n(core);
-// EXTERNAL MODULE: external "https"
-var external_https_ = __nccwpck_require__(5687);
-// EXTERNAL MODULE: external "buffer"
-var external_buffer_ = __nccwpck_require__(4300);
-;// CONCATENATED MODULE: ./node_modules/slack-notify/src/esm/index.mjs
+const childProcess = __nccwpck_require__(2081);
+const fs = __nccwpck_require__(7147);
+const github = __nccwpck_require__(3617);
+const githubActionCore = __nccwpck_require__(4097);
+const slack = __nccwpck_require__(579)(githubActionCore.getInput('webhook_url', { required: false}));
 
-
-
-const NO_URL_ERROR = 'No Slack URL configured.';
-
-function isString(str) {
-  return typeof str === 'string';
-}
-
-/* harmony default export */ const esm = ((url) => {
-  const pub = {};
-
-  pub.request = (data) => {
-    return new Promise((resolve, reject) => {
-      if (!url) {
-        return reject(NO_URL_ERROR);
-      }
-
-      post(url, JSON.stringify(data)).then((resBody) => {
-        if (resBody !== 'ok') {
-          reject(resBody);
-        } else {
-          resolve();
-        }
-      }).catch(reject);
-    });
-  };
-
-  pub.send = (options) => {
-    if (isString(options)) {
-      options = { text: options };
-    }
-
-    const data = Object.assign({}, options);
-
-    // Move the fields into attachments
-    if (options.fields) {
-      if (!data.attachments) {
-        data.attachments = [];
-      }
-
-      data.attachments.push({
-        fallback: 'Alert details',
-        fields: Object.values(options.fields).map((value, index) => {
-          const title = Object.keys(options.fields)[index];
-
-          return {
-            title,
-            value,
-            short: (value + '').length < 25
-          };
-        })
-      });
-
-      delete(data.fields);
-    }
-
-    // Remove the default icon_emoji if icon_url was set in options. Otherwise the default emoji will always override the url
-    if (options.icon_url && !options.icon_emoji) {
-      delete(data.icon_emoji);
-    }
-
-    return pub.request(data);
-  };
-
-  pub.extend = (defaults) => (options) => {
-    if (isString(options)) {
-      options = { text: options };
-    }
-
-    return pub.send(Object.assign({}, defaults, options));
-  };
-
-  pub.success = pub.extend({
-    channel: '#alerts',
-    icon_emoji: ':trophy:',
-    username: 'Success'
-  });
-
-  pub.bug = pub.extend({
-    channel: '#bugs',
-    icon_emoji: ':bomb:',
-    username: 'Bug'
-  });
-
-  pub.alert = pub.extend({
-    channel: '#alerts',
-    icon_emoji: ':warning:',
-    username: 'Alert'
-  });
-
-  return pub;
-});
-
-// Based off of https://stackoverflow.com/a/50891354
-function post(url, body) {
-  return new Promise((resolve, reject) => {
-    const req = external_https_.request(url, { method: 'POST' }, (res) => {
-      const chunks = [];
-      res.on('data', data => chunks.push(data));
-      res.on('end', () => {
-        let resBody = external_buffer_.Buffer.concat(chunks).toString();
-
-        switch (res.headers['content-type']) {
-          case 'application/json':
-            resBody = JSON.parse(resBody);
-            break;
-        }
-
-        resolve(resBody);
-      });
-    });
-
-    req.on('error', reject);
-
-    if (body) {
-      req.write(body);
-    }
-
-    req.end();
-  });
-}
-
-;// CONCATENATED MODULE: ./src/index.js
-
-
-
-
-
-
-
-
-const slackNotify = esm(core_default()?.getInput('webhook_url'));
 
 function successMessage(source, target) {
     return {
@@ -31296,13 +31246,13 @@ function sendSlackMessage(source, target, status) {
                   successMessage(source, target) :
                   errorMessage(source, target);
 
-    slackNotify.send({
+    slack.send({
         icon_emoji: payload.icon,
         username: payload.message,
         attachments: [
             {
-                author_name: (github_default()).context.payload.repository.full_name,
-                author_link: `https://github.com/${(github_default()).context.payload.repository.full_name}/`,
+                author_name: github.context.payload.repository.full_name,
+                author_link: `https://github.com/${github.context.payload.repository.full_name}/`,
                 title: payload.message,
                 text: payload.description,
                 color: payload.color,
@@ -31316,7 +31266,7 @@ function sendSlackMessage(source, target, status) {
 
 function executeMergeScript(source, target) {
     return new Promise((resolve, reject) => {
-        external_child_process_default().exec(`"./merge.sh" ${source} ${target}`, function(error, stdout, stderr) {
+        childProcess.exec(`"./merge.sh" ${source} ${target}`, function(error, stdout, stderr) {
             console.log('stdout:', stdout);
             console.log('stderr:', stderr);
             if (error) {
@@ -31329,28 +31279,28 @@ function executeMergeScript(source, target) {
 }
 
 async function run() {
-    const source = core_default().getInput('source');
-    const target = core_default().getInput('target');
-    core_default().info('Merging ' + source + ' into ' + target);
+    const source = githubActionCore.getInput('source', { required: true });
+    const target = githubActionCore.getInput('target', { required: true });
+    githubActionCore.info('Merging ' + source + ' into ' + target);
     try {
         await executeMergeScript(source, target);
-        const mergeState = external_fs_default().readFileSync('merge-status.txt', 'utf8').trim();
+        const mergeState = fs.readFileSync('merge-status.txt', 'utf8').trim();
 
         if (mergeState === 'success') {
             sendSlackMessage(source, target, 'success');
         } else {
             sendSlackMessage(source, target, 'failure');
-            core_default().setFailed(`Failed to merge ${source} into ${target}`);
+            githubActionCore.setFailed(`Failed to merge ${source} into ${target}`);
         }
     } 
     
     catch (error) {
         sendSlackMessage(source, target, 'failure');
-        core_default().setFailed(`Failed to merge ${source} into ${target}`);
+        githubActionCore.setFailed(`Failed to merge ${source} into ${target}`);
     } 
     
     finally {
-        external_fs_default().unlink('merge-status.txt', (err) => {
+        fs.unlink('merge-status.txt', (err) => {
             if (err) {
                 console.error('Failed to delete merge-status.txt:', err);
             } else {

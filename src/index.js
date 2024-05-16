@@ -1,12 +1,10 @@
 
-import childProcess  from 'child_process';
-import fs from 'fs';
-import github from '@actions/github';
-import githubActionCore from '@actions/core';
-import slack from 'slack-notify';
+const childProcess = require('child_process');
+const fs = require('fs');
+const github = require('@actions/github');
+const githubActionCore = require('@actions/core');
+const slack = require('slack-notify')(githubActionCore.getInput('webhook_url', { required: false }));
 
-
-const slackNotify = slack(githubActionCore?.getInput('webhook_url'));
 
 function successMessage(source, target) {
     return {
@@ -31,7 +29,7 @@ function sendSlackMessage(source, target, status) {
                   successMessage(source, target) :
                   errorMessage(source, target);
 
-    slackNotify.send({
+    slack.send({
         icon_emoji: payload.icon,
         username: payload.message,
         attachments: [
@@ -64,8 +62,8 @@ function executeMergeScript(source, target) {
 }
 
 async function run() {
-    const source = githubActionCore.getInput('source');
-    const target = githubActionCore.getInput('target');
+    const source = githubActionCore.getInput('source', { required: true });
+    const target = githubActionCore.getInput('target', { required: true });
     githubActionCore.info('Merging ' + source + ' into ' + target);
     try {
         await executeMergeScript(source, target);
