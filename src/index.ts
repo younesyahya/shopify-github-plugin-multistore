@@ -1,10 +1,21 @@
-const childProcess = require("child_process");
-const fs = require("fs");
-const path = require("path");
-const github = require("@actions/github");
-const githubActionCore = require("@actions/core");
+import childProcess from "child_process";
+import fs from "fs";
+import path from "path";
+import * as github from "@actions/github";
+import * as githubActionCore from "@actions/core";
 
-function successMessage(source, target) {
+type ActionSource = string;
+type ActionTarget = string;
+
+type MessagePayload = {
+  color?: string;
+  icon?: string;
+  message?: string;
+  description?: string;
+};
+
+
+function successMessage(source: ActionSource, target: ActionTarget): MessagePayload {
   return {
     color: "#27ae60",
     icon: ":white_check_mark:",
@@ -13,7 +24,7 @@ function successMessage(source, target) {
   };
 }
 
-function errorMessage(source, target) {
+function errorMessage(source: ActionSource, target: ActionTarget): MessagePayload {
   return {
     color: "#C0392A",
     icon: ":red_circle:",
@@ -22,7 +33,7 @@ function errorMessage(source, target) {
   };
 }
 
-function sendSlackMessage(source, target, status) {
+function sendSlackMessage(source: ActionSource, target: ActionTarget, status: string): void {
   if (githubActionCore.getInput("webhook_url")) {
     const slack = require('slack-notify')(githubActionCore.getInput('webhook_url'), { required: false });
     let payload =
@@ -35,8 +46,8 @@ function sendSlackMessage(source, target, status) {
       username: payload.message,
       attachments: [
         {
-          author_name: github.context.payload.repository.full_name,
-          author_link: `https://github.com/${github.context.payload.repository.full_name}/`,
+          author_name: github?.context?.payload?.repository?.full_name,
+          author_link: `https://github.com/${github?.context?.payload?.repository?.full_name}/`,
           title: payload.message,
           text: payload.description,
           color: payload.color,
@@ -47,9 +58,9 @@ function sendSlackMessage(source, target, status) {
   }
 }
 
-function executeMergeScript(source, target) {
+function executeMergeScript(source: ActionSource, target: ActionTarget): Promise<void> {
   const scriptPath = path.resolve(__dirname, "src/merge.sh");
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     childProcess.exec(
       `"${scriptPath}" ${source} ${target}`,
       function (error, stdout, stderr) {
@@ -65,8 +76,8 @@ function executeMergeScript(source, target) {
   });
 }
 
-function createMessageFile(message) {
-  return new Promise((resolve, reject) => {
+function createMessageFile() {
+  return new Promise<void>((resolve, reject) => {
     fs.writeFile("merge-status.txt", "", (err) => {
       if (err) {
         console.error("Failed to create merge-status.txt:", err);
@@ -78,7 +89,7 @@ function createMessageFile(message) {
 }
 
 function deleteMessageFile() {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     fs.unlink("merge-status.txt", (err) => {
       if (err) {
         console.error("Failed to delete merge-status.txt:", err);
@@ -96,7 +107,7 @@ async function run() {
   const target = githubActionCore.getInput("target", { required: true });
   githubActionCore.info("Merging " + source + " into " + target);
   
-  await createMessageFile("starting merge");
+  await createMessageFile();
 
   try {
     await executeMergeScript(source, target);
@@ -104,16 +115,14 @@ async function run() {
 
     if (mergeState === "success") {
       sendSlackMessage(source, target, "success");
-      githubActionCore.info(
-        "Merging " + source + " into " + target + " succeeded"
-      );
+      githubActionCore.info("Merging " + source + " into " + target + " succeeded");
     } else {
       sendSlackMessage(source, target, "failure");
       githubActionCore.setFailed(`Failed to merge ${source} into ${target}`);
     }
   } catch (error) {
-    sendSlackMessage(source, target, "failure");
-    githubActionCore.setFailed(`Failed to merge ${source} into ${target}`);
+      sendSlackMessage(source, target, "failure");
+      githubActionCore.setFailed(`Failed to merge ${source} into ${target}`);
   } finally {
     await deleteMessageFile();
   }

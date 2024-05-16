@@ -29341,14 +29341,6 @@ module.exports = require("buffer");
 
 /***/ }),
 
-/***/ 2081:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("child_process");
-
-/***/ }),
-
 /***/ 6206:
 /***/ ((module) => {
 
@@ -31207,135 +31199,191 @@ module.exports = parseParams
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__nccwpck_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__nccwpck_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__nccwpck_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
-const childProcess = __nccwpck_require__(2081);
-const fs = __nccwpck_require__(7147);
-const path = __nccwpck_require__(1017);
-const github = __nccwpck_require__(5438);
-const githubActionCore = __nccwpck_require__(2186);
+"use strict";
+// ESM COMPAT FLAG
+__nccwpck_require__.r(__webpack_exports__);
+
+;// CONCATENATED MODULE: external "child_process"
+const external_child_process_namespaceObject = require("child_process");
+var external_child_process_default = /*#__PURE__*/__nccwpck_require__.n(external_child_process_namespaceObject);
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(7147);
+var external_fs_default = /*#__PURE__*/__nccwpck_require__.n(external_fs_);
+// EXTERNAL MODULE: external "path"
+var external_path_ = __nccwpck_require__(1017);
+var external_path_default = /*#__PURE__*/__nccwpck_require__.n(external_path_);
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var github = __nccwpck_require__(5438);
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __nccwpck_require__(2186);
+;// CONCATENATED MODULE: ./src/index.ts
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+
+
+
+
 
 function successMessage(source, target) {
-  return {
-    color: "#27ae60",
-    icon: ":white_check_mark:",
-    message: `${source} was successfully merged into ${target}.`,
-    description: `*${target}* can be pushed to production!`,
-  };
+    return {
+        color: "#27ae60",
+        icon: ":white_check_mark:",
+        message: `${source} was successfully merged into ${target}.`,
+        description: `*${target}* can be pushed to production!`,
+    };
 }
-
 function errorMessage(source, target) {
-  return {
-    color: "#C0392A",
-    icon: ":red_circle:",
-    message: `*${source}* has conflict with *${target}*.`,
-    description: ":face_with_head_bandage: Fix me please :pray:",
-  };
+    return {
+        color: "#C0392A",
+        icon: ":red_circle:",
+        message: `*${source}* has conflict with *${target}*.`,
+        description: ":face_with_head_bandage: Fix me please :pray:",
+    };
 }
-
 function sendSlackMessage(source, target, status) {
-  if (githubActionCore.getInput("webhook_url")) {
-    const slack = __nccwpck_require__(4491)(githubActionCore.getInput('webhook_url'), { required: false });
-    let payload =
-      status === "success"
-        ? successMessage(source, target)
-        : errorMessage(source, target);
-
-    slack.send({
-      icon_emoji: payload.icon,
-      username: payload.message,
-      attachments: [
-        {
-          author_name: github.context.payload.repository.full_name,
-          author_link: `https://github.com/${github.context.payload.repository.full_name}/`,
-          title: payload.message,
-          text: payload.description,
-          color: payload.color,
-          fields: [{ title: "Job Status", value: status, short: false }],
-        },
-      ],
-    });
-  }
-}
-
-function executeMergeScript(source, target) {
-  const scriptPath = path.resolve(__dirname, "src/merge.sh");
-  return new Promise((resolve, reject) => {
-    childProcess.exec(
-      `"${scriptPath}" ${source} ${target}`,
-      function (error, stdout, stderr) {
-          if (error) {
-            console.log("stdout:", stdout);
-            console.log("stderr:", stderr);
-          console.error("exec error:", error);
-          return reject(error);
-        }
-        resolve();
-      }
-    );
-  });
-}
-
-function createMessageFile(message) {
-  return new Promise((resolve, reject) => {
-    fs.writeFile("merge-status.txt", "", (err) => {
-      if (err) {
-        console.error("Failed to create merge-status.txt:", err);
-        return reject(err);
-      }
-      resolve();
-    });
-  });
-}
-
-function deleteMessageFile() {
-  return new Promise((resolve, reject) => {
-    fs.unlink("merge-status.txt", (err) => {
-      if (err) {
-        console.error("Failed to delete merge-status.txt:", err);
-        return reject(err);
-      } else {
-        console.log("merge-status.txt was successfully deleted");
-        resolve();
-      }
-    });
-  });
-}
-
-async function run() {
-  const source = githubActionCore.getInput("source", { required: true });
-  const target = githubActionCore.getInput("target", { required: true });
-  githubActionCore.info("Merging " + source + " into " + target);
-  
-  await createMessageFile("starting merge");
-
-  try {
-    await executeMergeScript(source, target);
-    const mergeState = fs.readFileSync("merge-status.txt", "utf8").trim();
-
-    if (mergeState === "success") {
-      sendSlackMessage(source, target, "success");
-      githubActionCore.info(
-        "Merging " + source + " into " + target + " succeeded"
-      );
-    } else {
-      sendSlackMessage(source, target, "failure");
-      githubActionCore.setFailed(`Failed to merge ${source} into ${target}`);
+    var _a, _b, _c, _d, _e, _f;
+    if (core.getInput("webhook_url")) {
+        const slack = __nccwpck_require__(4491)(core.getInput('webhook_url'), { required: false });
+        let payload = status === "success"
+            ? successMessage(source, target)
+            : errorMessage(source, target);
+        slack.send({
+            icon_emoji: payload.icon,
+            username: payload.message,
+            attachments: [
+                {
+                    author_name: (_c = (_b = (_a = github === null || github === void 0 ? void 0 : github.context) === null || _a === void 0 ? void 0 : _a.payload) === null || _b === void 0 ? void 0 : _b.repository) === null || _c === void 0 ? void 0 : _c.full_name,
+                    author_link: `https://github.com/${(_f = (_e = (_d = github === null || github === void 0 ? void 0 : github.context) === null || _d === void 0 ? void 0 : _d.payload) === null || _e === void 0 ? void 0 : _e.repository) === null || _f === void 0 ? void 0 : _f.full_name}/`,
+                    title: payload.message,
+                    text: payload.description,
+                    color: payload.color,
+                    fields: [{ title: "Job Status", value: status, short: false }],
+                },
+            ],
+        });
     }
-  } catch (error) {
-    sendSlackMessage(source, target, "failure");
-    githubActionCore.setFailed(`Failed to merge ${source} into ${target}`);
-  } finally {
-    await deleteMessageFile();
-  }
 }
-
+function executeMergeScript(source, target) {
+    const scriptPath = external_path_default().resolve(__dirname, "src/merge.sh");
+    return new Promise((resolve, reject) => {
+        external_child_process_default().exec(`"${scriptPath}" ${source} ${target}`, function (error, stdout, stderr) {
+            if (error) {
+                console.log("stdout:", stdout);
+                console.log("stderr:", stderr);
+                console.error("exec error:", error);
+                return reject(error);
+            }
+            resolve();
+        });
+    });
+}
+function createMessageFile() {
+    return new Promise((resolve, reject) => {
+        external_fs_default().writeFile("merge-status.txt", "", (err) => {
+            if (err) {
+                console.error("Failed to create merge-status.txt:", err);
+                return reject(err);
+            }
+            resolve();
+        });
+    });
+}
+function deleteMessageFile() {
+    return new Promise((resolve, reject) => {
+        external_fs_default().unlink("merge-status.txt", (err) => {
+            if (err) {
+                console.error("Failed to delete merge-status.txt:", err);
+                return reject(err);
+            }
+            else {
+                console.log("merge-status.txt was successfully deleted");
+                resolve();
+            }
+        });
+    });
+}
+function run() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const source = core.getInput("source", { required: true });
+        const target = core.getInput("target", { required: true });
+        core.info("Merging " + source + " into " + target);
+        yield createMessageFile();
+        try {
+            yield executeMergeScript(source, target);
+            const mergeState = external_fs_default().readFileSync("merge-status.txt", "utf8").trim();
+            if (mergeState === "success") {
+                sendSlackMessage(source, target, "success");
+                core.info("Merging " + source + " into " + target + " succeeded");
+            }
+            else {
+                sendSlackMessage(source, target, "failure");
+                core.setFailed(`Failed to merge ${source} into ${target}`);
+            }
+        }
+        catch (error) {
+            sendSlackMessage(source, target, "failure");
+            core.setFailed(`Failed to merge ${source} into ${target}`);
+        }
+        finally {
+            yield deleteMessageFile();
+        }
+    });
+}
 run();
 
 })();

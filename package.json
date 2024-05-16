@@ -9,7 +9,7 @@
     "url": "git+https://github.com/younesyahya/shopify-github-plugin-multistore.git"
   },
   "scripts": {
-    "build": "ncc build src/index.js -o dist",
+    "build": "ncc build src/index.ts -o dist",
     "postbuild": "copyfiles src/merge.sh dist/ && chmod +x dist/src/merge.sh",
     "prepare": "husky"
   },
@@ -19,8 +19,10 @@
     "slack-notify": "^2.0.7"
   },
   "devDependencies": {
+    "@types/node": "^20.12.12",
     "@vercel/ncc": "^0.38.1",
     "copyfiles": "^2.4.1",
-    "husky": "^9.0.11"
+    "husky": "^9.0.11",
+    "typescript": "^5.4.5"
   }
 }
