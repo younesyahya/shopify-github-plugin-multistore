@@ -1,7 +1,7 @@
 {
   "name": "@younesyahya/shopify-github-plugin-multistore",
   "version": "0.0.2",
-  "main": "src/merge.js",
+  "main": "src/index.js",
   "author": "Younes YAHYA",
   "license": "MIT",
   "repository": {
