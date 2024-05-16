@@ -1,6 +1,6 @@
 const childProcess = require('child_process');
 const fs = require('fs');
-const github = require('@actions/github')
+const github = require('@actions/github');
 const githubActionCore = require('@actions/core');
 const slack = require('slack-notify')(githubActionCore.getInput('webhook_url'));
 
@@ -10,7 +10,7 @@ function successMessage(source, target) {
         icon: ":white_check_mark:",
         message: `${source} was successfully merged into ${target}.`,
         description: `*${target}* can be pushed to production!`
-    }
+    };
 }
 
 function errorMessage(source, target) {
@@ -19,7 +19,7 @@ function errorMessage(source, target) {
         icon: ":red_circle:",
         message: `*${source}* has conflict with *${target}*.`,
         description: ":face_with_head_bandage: Fix me please :pray:"
-    }
+    };
 }
 
 function sendSlackMessage(source, target, status) {
@@ -45,9 +45,9 @@ function sendSlackMessage(source, target, status) {
     });
 }
 
-function executeMergeScript() {
+function executeMergeScript(source, target) {
     return new Promise((resolve, reject) => {
-        childProcess.exec('./merge.sh', function(error, stdout, stderr) {
+        childProcess.exec(`"./merge.sh" ${source} ${target}`, function(error, stdout, stderr) {
             console.log('stdout:', stdout);
             console.log('stderr:', stderr);
             if (error) {
@@ -62,9 +62,9 @@ function executeMergeScript() {
 async function run() {
     const source = githubActionCore.getInput('source');
     const target = githubActionCore.getInput('target');
-    githubActionCore.message('Merging ' + source + ' into ' + target);
+    githubActionCore.info('Merging ' + source + ' into ' + target);
     try {
-        await executeMergeScript();
+        await executeMergeScript(source, target);
         const mergeState = fs.readFileSync('merge-status.txt', 'utf8').trim();
 
         if (mergeState === 'success') {
@@ -73,10 +73,14 @@ async function run() {
             sendSlackMessage(source, target, 'failure');
             githubActionCore.setFailed(`Failed to merge ${source} into ${target}`);
         }
-    } catch (error) {
+    } 
+    
+    catch (error) {
         sendSlackMessage(source, target, 'failure');
         githubActionCore.setFailed(`Failed to merge ${source} into ${target}`);
-    } finally {
+    } 
+    
+    finally {
         fs.unlink('merge-status.txt', (err) => {
             if (err) {
                 console.error('Failed to delete merge-status.txt:', err);
