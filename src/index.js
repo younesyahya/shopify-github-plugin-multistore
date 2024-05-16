@@ -67,7 +67,7 @@ function executeMergeScript(source, target) {
 
 function createMessageFile(message) {
   return new Promise((resolve, reject) => {
-    fs.writeFile("merge-status.txt", undefined, (err) => {
+    fs.writeFile("merge-status.txt", "", (err) => {
       if (err) {
         console.error("Failed to create merge-status.txt:", err);
         return reject(err);
