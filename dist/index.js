@@ -31266,7 +31266,7 @@ function sendSlackMessage(source, target, status) {
 
 function executeMergeScript(source, target) {
     return new Promise((resolve, reject) => {
-        childProcess.exec(`./merge.sh ${source} ${target}`, function(error, stdout, stderr) {
+        childProcess.exec(`src/merge.sh ${source} ${target}`, function(error, stdout, stderr) {
             console.log('stdout:', stdout);
             console.log('stderr:', stderr);
             if (error) {
