@@ -24,6 +24,10 @@ function errorMessage(source, target) {
 }
 
 function sendSlackMessage(source, target, status) {
+    if(!githubActionCore.getInput('webhook_url')) {
+        return;
+    }
+    
     let payload = status === 'success' ?
                   successMessage(source, target) :
                   errorMessage(source, target);
