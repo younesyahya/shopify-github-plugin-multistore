@@ -20,6 +20,7 @@ if git merge --no-commit --no-ff --strategy-option theirs --allow-unrelated-hist
 
     # Commit the merge with a message
     git commit -m "GitHub Action: Merge $FROM_BRANCH into $TO_BRANCH"
+    echo "Merge successful - pushing changes to $TO_BRANCH"
 
     # Push the changes to the 'to' branch on the origin remote
     git push --force origin $TO_BRANCH
