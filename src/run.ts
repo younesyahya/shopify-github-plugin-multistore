@@ -15,7 +15,7 @@ type MessagePayload = {
 };
 
 
-function successMessage(source: ActionSource, target: ActionTarget): MessagePayload {
+export function successMessage(source: ActionSource, target: ActionTarget): MessagePayload {
   return {
     color: "#27ae60",
     icon: ":white_check_mark:",
@@ -24,7 +24,7 @@ function successMessage(source: ActionSource, target: ActionTarget): MessagePayl
   };
 }
 
-function errorMessage(source: ActionSource, target: ActionTarget): MessagePayload {
+export function errorMessage(source: ActionSource, target: ActionTarget): MessagePayload {
   return {
     color: "#C0392A",
     icon: ":red_circle:",
@@ -33,7 +33,7 @@ function errorMessage(source: ActionSource, target: ActionTarget): MessagePayloa
   };
 }
 
-function sendSlackMessage(source: ActionSource, target: ActionTarget, status: string): void {
+export function sendSlackMessage(source: ActionSource, target: ActionTarget, status: string): void {
   if (githubActionCore.getInput("webhook_url")) {
     const slack = require('slack-notify')(githubActionCore.getInput('webhook_url'), { required: false });
     let payload =
@@ -58,7 +58,7 @@ function sendSlackMessage(source: ActionSource, target: ActionTarget, status: st
   }
 }
 
-function executeMergeScript(source: ActionSource, target: ActionTarget): Promise<void> {
+export function executeMergeScript(source: ActionSource, target: ActionTarget): Promise<void> {
   const scriptPath = path.resolve(__dirname, "src/merge.sh");
   return new Promise<void>((resolve, reject) => {
     childProcess.exec(
@@ -76,7 +76,7 @@ function executeMergeScript(source: ActionSource, target: ActionTarget): Promise
   });
 }
 
-function createMessageFile() {
+export function createMessageFile() {
   return new Promise<void>((resolve, reject) => {
     fs.writeFile("merge-status.txt", "", (err) => {
       if (err) {
@@ -88,7 +88,7 @@ function createMessageFile() {
   });
 }
 
-function deleteMessageFile() {
+export function deleteMessageFile() {
   return new Promise<void>((resolve, reject) => {
     fs.unlink("merge-status.txt", (err) => {
       if (err) {
@@ -102,7 +102,7 @@ function deleteMessageFile() {
   });
 }
 
-async function run() {
+export async function run() {
   const source = githubActionCore.getInput("source", { required: true });
   const target = githubActionCore.getInput("target", { required: true });
   githubActionCore.info("Merging " + source + " into " + target);
