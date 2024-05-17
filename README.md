@@ -1,8 +1,8 @@
 <div align="center">
 <img align="center" src="assets/shopify-logo.png" style="background:transparent;" width="30"></div>
-<h1 align="center">Shopify Multi-Store Workflow 🔁 </h1> 
+<h1 align="center">Shopify Multi-Store Workflow 🔁 - By <a href="https://the-deployer.fr" style="color: inherit; text-decoration: underline;">The Deployer</a></h1> 
 
-<p>Ce plugin permet de gérer plusieurs boutiques Shopify à partir d'une seule codebase. Il permet de synchroniser synchroniser toute la base de code de chaque boutiques d'un projet sans que le contenu des autres boutiques ne soit impacté. 
+<p>Ce plugin permet de gérer plusieurs boutiques Shopify à partir d'une seule codebase. Il permet de synchroniser le code de chaque boutiques d'un projet sans que le contenu des autres boutiques ne soit impacté. 
 
 Pour cela on ignore toutes les modifications JSON (according to Shopify 2.0) de sorte que les modifications de contenu ne soient pas synchronisées entre les boutiques.
 
@@ -13,7 +13,6 @@ Ce plugin est très spécifique à notre utilisation de Shopify et de GitHub. Il
 ## Légende
 
 - 🖼️ [Schéma](#schéma-de-larchitecture-de-synchronisation)
-- 📋 [Description](#description)
 - 🚀 [Features](#features)
 - 📦 [Installation](#installation)
 - 💻 [Utilisation](#utilisation)
