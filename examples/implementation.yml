@@ -1,4 +1,4 @@
-name: Multistore test 
+name: Test 
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
@@ -6,17 +6,9 @@ on:
   pull_request:
    branches:
      - main
-   paths-ignore:
-     - 'templates/*.json'
-     - 'config/*.json'
-     - 'locales/*.json' 
   push:
    branches:
      - main
-   paths-ignore:
-     - 'templates/*.json'
-     - 'config/*.json'
-     - 'locales/*.json'
    
 
 jobs:
@@ -28,7 +20,7 @@ jobs:
      - name: checkout
        uses: actions/checkout@v2
      - name: merge
-       uses: younesyahya/shopify-github-plugin-multistore@0.0.2
+       uses: younesyahya/shopify-github-plugin-multistore@0.0.9
        id: merge-canada
        with:
          github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -36,11 +28,10 @@ jobs:
          target: 'live-canada'
          ignore_json_files: "true"
      - name: merge
-       uses: younesyahya/shopify-github-plugin-multistore@0.0.2
+       uses: younesyahya/shopify-github-plugin-multistore@0.0.9
        id: merge-france
        with:
          github_token: ${{ secrets.GITHUB_TOKEN }}
          source: 'main'
          target: 'live-france'
          ignore_json_files: "true"
-
