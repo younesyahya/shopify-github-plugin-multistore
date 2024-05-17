@@ -31292,25 +31292,25 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
 
 function successMessage(source, target) {
     return {
-        color: "#27ae60",
-        icon: ":white_check_mark:",
+        color: '#27ae60',
+        icon: ':white_check_mark:',
         message: `${source} was successfully merged into ${target}.`,
-        description: `*${target}* can be pushed to production!`,
+        description: `*${target}* can be pushed to production!`
     };
 }
 function errorMessage(source, target) {
     return {
-        color: "#C0392A",
-        icon: ":red_circle:",
+        color: '#C0392A',
+        icon: ':red_circle:',
         message: `*${source}* has conflict with *${target}*.`,
-        description: ":face_with_head_bandage: Fix me please :pray:",
+        description: ':face_with_head_bandage: Fix me please :pray:'
     };
 }
 function sendSlackMessage(source, target, status) {
     var _a, _b, _c, _d, _e, _f;
-    if (core.getInput("webhook_url")) {
+    if (core.getInput('webhook_url')) {
         const slack = __nccwpck_require__(4491)(core.getInput('webhook_url'), { required: false });
-        let payload = status === "success"
+        let payload = status === 'success'
             ? successMessage(source, target)
             : errorMessage(source, target);
         slack.send({
@@ -31323,20 +31323,20 @@ function sendSlackMessage(source, target, status) {
                     title: payload.message,
                     text: payload.description,
                     color: payload.color,
-                    fields: [{ title: "Job Status", value: status, short: false }],
-                },
-            ],
+                    fields: [{ title: 'Job Status', value: status, short: false }]
+                }
+            ]
         });
     }
 }
 function executeMergeScript(source, target) {
-    const scriptPath = external_path_default().resolve(__dirname, "src/merge.sh");
+    const scriptPath = external_path_default().resolve(__dirname, 'src/merge.sh');
     return new Promise((resolve, reject) => {
         external_child_process_default().exec(`"${scriptPath}" ${source} ${target}`, function (error, stdout, stderr) {
             if (error) {
-                console.log("stdout:", stdout);
-                console.log("stderr:", stderr);
-                console.error("exec error:", error);
+                console.log('stdout:', stdout);
+                console.log('stderr:', stderr);
+                console.error('exec error:', error);
                 return reject(error);
             }
             resolve();
@@ -31345,9 +31345,9 @@ function executeMergeScript(source, target) {
 }
 function createMessageFile() {
     return new Promise((resolve, reject) => {
-        external_fs_default().writeFile("merge-status.txt", "", (err) => {
+        external_fs_default().writeFile('merge-status.txt', '', err => {
             if (err) {
-                console.error("Failed to create merge-status.txt:", err);
+                console.error('Failed to create merge-status.txt:', err);
                 return reject(err);
             }
             resolve();
@@ -31356,13 +31356,13 @@ function createMessageFile() {
 }
 function deleteMessageFile() {
     return new Promise((resolve, reject) => {
-        external_fs_default().unlink("merge-status.txt", (err) => {
+        external_fs_default().unlink('merge-status.txt', err => {
             if (err) {
-                console.error("Failed to delete merge-status.txt:", err);
+                console.error('Failed to delete merge-status.txt:', err);
                 return reject(err);
             }
             else {
-                console.log("merge-status.txt was successfully deleted");
+                console.log('merge-status.txt was successfully deleted');
                 resolve();
             }
         });
@@ -31370,24 +31370,24 @@ function deleteMessageFile() {
 }
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        const source = core.getInput("source", { required: true });
-        const target = core.getInput("target", { required: true });
-        core.info("Merging " + source + " into " + target);
+        const source = core.getInput('source', { required: true });
+        const target = core.getInput('target', { required: true });
+        core.info('Merging ' + source + ' into ' + target);
         yield createMessageFile();
         try {
             yield executeMergeScript(source, target);
-            const mergeState = external_fs_default().readFileSync("merge-status.txt", "utf8").trim();
-            if (mergeState === "success") {
-                sendSlackMessage(source, target, "success");
-                core.info("Merging " + source + " into " + target + " succeeded");
+            const mergeState = external_fs_default().readFileSync('merge-status.txt', 'utf8').trim();
+            if (mergeState === 'success') {
+                sendSlackMessage(source, target, 'success');
+                core.info('Merging ' + source + ' into ' + target + ' succeeded');
             }
             else {
-                sendSlackMessage(source, target, "failure");
+                sendSlackMessage(source, target, 'failure');
                 core.setFailed(`Failed to merge ${source} into ${target}`);
             }
         }
         catch (error) {
-            sendSlackMessage(source, target, "failure");
+            sendSlackMessage(source, target, 'failure');
             core.setFailed(`Failed to merge ${source} into ${target}`);
         }
         finally {
