@@ -20,7 +20,7 @@ jobs:
      - name: checkout
        uses: actions/checkout@v2
      - name: merge
-       uses: younesyahya/shopify-github-plugin-multistore@v1
+       uses: younesyahya/shopify-github-plugin-multistore@1.0.0-beta
        id: merge-canada
        with:
          github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -28,7 +28,7 @@ jobs:
          target: 'live-canada'
          ignore_json_files: "true"
      - name: merge
-       uses: younesyahya/shopify-github-plugin-multistore@v1
+       uses: younesyahya/shopify-github-plugin-multistore@1.0.0-beta
        id: merge-france
        with:
          github_token: ${{ secrets.GITHUB_TOKEN }}
