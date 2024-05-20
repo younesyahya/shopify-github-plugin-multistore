@@ -29,8 +29,8 @@ git checkout $TO_BRANCH && git pull origin $TO_BRANCH || git checkout -b $TO_BRA
 if git merge --no-commit --no-ff --strategy-option theirs --allow-unrelated-histories $FROM_BRANCH; then
     
     # Remove modifications on JSON files from the current commit, ignoring errors
-    git restore --staged templates/*.json config/settings_data.json locales/*.json sections/*.json 2>/dev/null || true
-    git restore templates/*.json config/settings_data.json locales/*.json sections/*.json 2>/dev/null || true
+    git restore --staged templates/*.json config/settings_data.json sections/*.json 2>/dev/null || true
+    git restore templates/*.json config/settings_data.json sections/*.json 2>/dev/null || true
 
     # Commit the merge with a message
     git commit -m "GitHub Action: Merge $FROM_BRANCH into $TO_BRANCH"
