@@ -31,15 +31,15 @@ git pull origin $TO_BRANCH
 if git merge --no-commit --no-ff --strategy-option theirs --allow-unrelated-histories $FROM_BRANCH; then
     
     # Remove modifications on JSON files from the current commit, ignoring errors
-    git restore --staged templates/*.json config/settings_data.json sections/*.json 2>/dev/null || true
-    git restore templates/*.json config/settings_data.json sections/*.json 2>/dev/null || true
+    git restore --staged templates/*.json config/settings_data.json sections/*.json 
+    git restore templates/*.json config/settings_data.json sections/*.json 
 
     # Commit the merge with a message
     git commit -m "GitHub Action: Merge $FROM_BRANCH into $TO_BRANCH"
     echo "Merge successful - pushing changes to $TO_BRANCH"
 
     # Push the changes to the 'to' branch on the origin remote
-    git push --force origin $TO_BRANCH
+    git push --force --set-upsteam origin $TO_BRANCH
 
     # Checkout the source branch
     git checkout $FROM_BRANCH
