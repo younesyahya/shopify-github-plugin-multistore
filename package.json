@@ -1,6 +1,6 @@
 {
   "name": "@younesyahya/shopify-github-plugin-multistore",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "main": "src/index.js",
   "author": "Younes YAHYA",
   "license": "MIT",

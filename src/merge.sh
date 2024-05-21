@@ -29,23 +29,28 @@ git pull origin $TO_BRANCH
 # Start the merge but don't commit automatically, favoring 'theirs' strategy option for conflicts
 if git merge --no-commit --no-ff --strategy-option theirs --allow-unrelated-histories $FROM_BRANCH; then
     
-    # Check if sections/*.json files exist
-    if find sections -name "*.json" | grep -q .; then
-        # Restore all JSON files if sections/*.json exist
-        git restore --staged templates/*.json config/settings_data.json sections/*.json 
-        git restore templates/*.json config/settings_data.json sections/*.json 
+    # Check if there are changes to be committed after the merge
+    if git diff --quiet; then
+        echo "No changes to merge"
     else
-        # Restore only templates and config JSON files if no sections/*.json exist
-        git restore --staged templates/*.json config/settings_data.json
-        git restore templates/*.json config/settings_data.json
+        # Check if sections/*.json files exist
+        if find sections -name "*.json" | grep -q .; then
+            # Restore all JSON files if sections/*.json exist
+            git restore --staged templates/*.json config/settings_data.json sections/*.json 
+            git restore templates/*.json config/settings_data.json sections/*.json 
+        else
+            # Restore only templates and config JSON files if no sections/*.json exist
+            git restore --staged templates/*.json config/settings_data.json
+            git restore templates/*.json config/settings_data.json
+        fi
+
+        # Commit the merge with a message
+        git commit -m "GitHub Action: Merge $FROM_BRANCH into $TO_BRANCH"
+        echo "Merge successful - pushing changes to $TO_BRANCH"
+
+        # Push the changes to the 'to' branch on the origin remote
+        git push --force --set-upstream origin $TO_BRANCH
     fi
-
-    # Commit the merge with a message
-    git commit -m "GitHub Action: Merge $FROM_BRANCH into $TO_BRANCH"
-    echo "Merge successful - pushing changes to $TO_BRANCH"
-
-    # Push the changes to the 'to' branch on the origin remote
-    git push --force --set-upstream origin $TO_BRANCH
 
     # Checkout the source branch
     git checkout $FROM_BRANCH
