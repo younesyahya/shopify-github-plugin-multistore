@@ -20,10 +20,12 @@ git fetch origin $FROM_BRANCH
 git fetch origin $TO_BRANCH
 
 # Checkout the source branch and pull the latest changes
-git checkout $FROM_BRANCH && git pull origin $FROM_BRANCH || git checkout -b $FROM_BRANCH origin/$FROM_BRANCH
+git checkout $FROM_BRANCH || git checkout -b $FROM_BRANCH origin/$FROM_BRANCH
+git pull origin $FROM_BRANCH
 
 # Checkout the target branch and pull the latest changes
-git checkout $TO_BRANCH && git pull origin $TO_BRANCH || git checkout -b $TO_BRANCH origin/$TO_BRANCH
+git checkout $TO_BRANCH || git checkout -b $TO_BRANCH origin/$TO_BRANCH
+git pull origin $TO_BRANCH
 
 # Start the merge but don't commit automatically, favoring 'theirs' strategy option for conflicts
 if git merge --no-commit --no-ff --strategy-option theirs --allow-unrelated-histories $FROM_BRANCH; then

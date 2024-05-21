@@ -31275,7 +31275,7 @@ var external_path_default = /*#__PURE__*/__nccwpck_require__.n(external_path_);
 var github = __nccwpck_require__(5438);
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(2186);
-;// CONCATENATED MODULE: ./src/run.ts
+;// CONCATENATED MODULE: ./src/index.ts
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {

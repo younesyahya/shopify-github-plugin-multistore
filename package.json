@@ -1,7 +1,7 @@
 {
   "name": "@younesyahya/shopify-github-plugin-multistore",
   "version": "1.0.0",
-  "main": "src/run.js",
+  "main": "src/index.js",
   "author": "Younes YAHYA",
   "license": "MIT",
   "repository": {
@@ -9,7 +9,7 @@
     "url": "git+https://github.com/younesyahya/shopify-github-plugin-multistore.git"
   },
   "scripts": {
-    "build": "ncc build src/run.ts -o dist",
+    "build": "ncc build src/index.ts -o dist",
     "postbuild": "copyfiles src/merge.sh dist/ && chmod +x dist/src/merge.sh",
     "prepare": "husky",
     "test": "jest",
